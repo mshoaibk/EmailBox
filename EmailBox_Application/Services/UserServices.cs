@@ -19,6 +19,39 @@ namespace EmailBox_Application.Services
         this.dbContextEB = dbContextEB;
         }
         #region Get / Check / Login
+        public async Task<UserResponse?> GetUserById(long id)
+        {
+            UserResponse obj = new UserResponse();
+                return await dbContextEB.Tbl_User.Where(x => x.Id ==id).Select(x => new UserResponse
+                {
+                    Id = x.Id,
+                    UserNamee = x.UserName,
+                    Email = x.Email,
+                    Password = x.Password,
+                    PhoneNumber = x.PhoneNumber,
+                    Location = x.Location,
+                    Role = x.Role,
+                }).AsNoTracking().FirstOrDefaultAsync();
+           
+           
+        }
+        public async Task<List<UserResponse>?> GetAllUser()
+        {
+          
+            return await dbContextEB.Tbl_User.Select(x => new UserResponse
+            {
+                Id = x.Id,
+                UserNamee = x.UserName,
+                Email = x.Email,
+                Password = x.Password,
+                PhoneNumber = x.PhoneNumber,
+                Location = x.Location,
+                Role = x.Role,
+                isActive    =x.IsActive
+            }).AsNoTracking().ToListAsync();
+
+
+        }
         public async Task<bool> IsUserExsit(string Email)
         {
             return dbContextEB.Tbl_User.Where(x => x.Email == Email).Any();
@@ -27,7 +60,7 @@ namespace EmailBox_Application.Services
         {
             UserResponse obj = new UserResponse();
 
-            if(dbContextEB.Tbl_User.Where(x => x.Email == model.Email && x.Password == model.Password).Any())
+            if(dbContextEB.Tbl_User.Where(x => x.Email == model.Email && x.Password == model.Password && x.IsActive==true && x.IsDeleted==false).Any())
             {
               return  await dbContextEB.Tbl_User.Where(x => x.Email == model.Email && x.Password == model.Password).Select(x=>new UserResponse
                 {
@@ -43,7 +76,8 @@ namespace EmailBox_Application.Services
             return obj;
         }
         #endregion
-        #region Create
+
+        #region Create / update /Delete
         public async Task<bool> CreateUser(UserRequestByAdmin model)
         {
             if(!(dbContextEB.Tbl_User.Where(x=>x.Email == model.Email).Any()))
@@ -54,6 +88,8 @@ namespace EmailBox_Application.Services
                 PhoneNumber = model.PhoneNumber,
                 Location = model.Location,
                 UserName = model.UserNamee,
+                IsActive = model.IsActive,
+                Role = model.Role,
             };
              dbContextEB.Add(obj);
             await dbContextEB.SaveChangesAsync();
@@ -79,6 +115,37 @@ namespace EmailBox_Application.Services
                 return true;
             }
             return false;
+        }
+
+        public async Task<bool> UpdateUser(UserRequestByAdmin model)
+         {
+            
+           
+            var obj = dbContextEB.Tbl_User.Where(x=>x.Id == model.Id).FirstOrDefault();
+                if (obj != null)
+                {
+                    obj.Email = model.Email;
+                    obj.Password = model.Password;
+                    obj.PhoneNumber = model.PhoneNumber;
+                    obj.Location = model.Location;
+                    obj.UserName = model.UserNamee;
+                    obj.IsActive = model.IsActive;
+                    dbContextEB.Update(obj);
+                    dbContextEB.SaveChanges();
+                }
+            
+            return true;
+         }
+        public async Task<bool> DeleteUser(long Id)
+        {
+            var obj = dbContextEB.Tbl_User.Where(x => x.Id ==Id).FirstOrDefault();
+            if (obj != null) 
+            {
+                obj.IsDeleted = true;
+            }
+            dbContextEB.Update(obj);
+            dbContextEB.SaveChanges();
+            return true;
         }
         #endregion
     }

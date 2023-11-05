@@ -10,6 +10,7 @@ namespace EmailBox_Core_Web_App.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,User")]
     public class PrivateEmailController : ControllerBase
     {
         private readonly IPrivateEmailServices _privateEmailServices;
@@ -24,7 +25,6 @@ namespace EmailBox_Core_Web_App.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("SendPrivatEmail")]
-        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles = "Admin,User")]
         public async Task<IActionResult> SendPrivatEmail(EmailSendReq model)
         {
             try
@@ -45,8 +45,7 @@ namespace EmailBox_Core_Web_App.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Inbox")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,User")]
+        [Route("Inbox")] 
         public async Task<IActionResult> GetInboxListDataByUserID()
         {
             try
@@ -70,7 +69,6 @@ namespace EmailBox_Core_Web_App.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("Sentbox")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,User")]
         public async Task<IActionResult> GetSendListDataByUserID()
         {
             try

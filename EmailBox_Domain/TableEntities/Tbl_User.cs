@@ -18,6 +18,10 @@ namespace EmailBox_Domain.TableEntities
         public string? PhoneNumber { get; set; }
         public string? Location { get; set; }
         public string? Password { get; set; }
-        public string? Role { get; set; }
+        public string? Role { get; set; } 
+        public bool? IsDeleted { get; set; }
+        public bool? IsActive { get; set; }
+        public string? CreateBY { get; set; }
+        public DateTime? CreateDate { get; set; }
     }
 }
