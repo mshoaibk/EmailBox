@@ -47,7 +47,7 @@ namespace EmailBox_Core_Web_App.Controllers
                     var Claims = new[]
                     {
                         new Claim(ClaimTypes.NameIdentifier,_result.UserNamee),
-                        //new Claim(ClaimTypes.GivenName,_result.PhoneNumber),
+                        new Claim(ClaimTypes.Name,_result.Id.ToString()),
                         new Claim(ClaimTypes.Email,_result.Email),
                         new Claim(ClaimTypes.MobilePhone,_result.Email),
                         new Claim(ClaimTypes.Locality,_result.Location),

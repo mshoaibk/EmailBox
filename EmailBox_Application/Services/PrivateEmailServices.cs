@@ -63,7 +63,7 @@ namespace EmailBox_Application.Services
 
                 objEmailSendResponse.boxID = objEmail.BoxID;
                 objEmailSendResponse.sender_UserId = objEmail.Sender_UserId;
-                objEmailSendResponse.reciverId_UserId = objEmail.Sender_UserId;
+                objEmailSendResponse.reciverId_UserId = objEmail.ReciverId_UserId;
                 objEmailSendResponse.emailBody = objEmail.EmailBody;
                 objEmailSendResponse.createdDateTime = objEmail.CreatedDateTime;
                 objEmailSendResponse.fIlePath = objEmail.FIlePath;
@@ -104,7 +104,7 @@ namespace EmailBox_Application.Services
                 //Response Body
                 objEmailSendResponse.boxID = objEmail.BoxID;
                 objEmailSendResponse.sender_UserId = objEmail.Sender_UserId;
-                objEmailSendResponse.reciverId_UserId = objEmail.Sender_UserId;
+                objEmailSendResponse.reciverId_UserId = objEmail.ReciverId_UserId;
                 objEmailSendResponse.emailBody = objEmail.EmailBody;
                 objEmailSendResponse.createdDateTime = objEmail.CreatedDateTime;
                 objEmailSendResponse.fIlePath = objEmail.FIlePath;
@@ -173,14 +173,14 @@ namespace EmailBox_Application.Services
         #endregion
 
         #region MailBox
-        public async Task<BoxMessagesRespose> inboxDataByID(long? UserID)
+        public async Task<BoxMessagesRespose> inboxDataByID(long? UserID, long? b)
         {
             var Data = new BoxMessagesRespose();
             //Get All email wich  is Sented TO me
-            var EmailsBoxids = dbContextEM.TblPrivateEmail.Where(x => x.ReciverId_UserId == UserID).Select(x => x.BoxID).ToList(); //here i will get these boxid which i recived only
+            //var EmailsBoxids = dbContextEM.TblPrivateEmail.Where(x => x.ReciverId_UserId == UserID).Select(x => x.BoxID).ToList(); //here i will get these boxid which i recived only
 
             //Get Letast Message of everyBox to show in inbox
-            Data = dbContextEM.TblEmailBox.Where(x => EmailsBoxids.Contains(x.BoxId)).Select(x => new BoxMessagesRespose
+            Data = dbContextEM.TblEmailBox.Where(x =>x.BoxId == b).Select(x => new BoxMessagesRespose
             {
                 photoPath = "",
                 boxId = x.BoxId,
@@ -194,13 +194,13 @@ namespace EmailBox_Application.Services
 
             return Data;
         }
-        public async Task<BoxMessagesRespose> SentDataById(long? UserID)
+        public async Task<BoxMessagesRespose> SentDataById(long? UserID, long? b)
         {
             var Data = new BoxMessagesRespose();
             //Get All email wich  is Sented TO me
-            var EmailsBoxids = dbContextEM.TblPrivateEmail.Where(x => x.Sender_UserId == UserID).Select(x => x.BoxID).ToList(); //here i will get these boxid which i recived only
+            //var EmailsBoxids = dbContextEM.TblPrivateEmail.Where(x => x.Sender_UserId == UserID).Select(x => x.BoxID).ToList(); //here i will get these boxid which i recived only
             //Get Letast Message of everyBox to show in inbox
-            Data = dbContextEM.TblEmailBox.Where(x => EmailsBoxids.Contains(x.BoxId)).Select(x => new BoxMessagesRespose
+            Data = dbContextEM.TblEmailBox.Where(x => x.BoxId ==b).Select(x => new BoxMessagesRespose
             {
                 photoPath = "",
                 boxId = x.BoxId,
@@ -230,7 +230,7 @@ namespace EmailBox_Application.Services
                 dateTime = x.DateTime,
                 lastEmailTitle = x.EmailTitle,
                 LastEmailBody = x.LastEmailBody,
-            }).ToList();
+            }).OrderByDescending(x=>x.dateTime).ToList();
 
 
             return List;
@@ -253,7 +253,7 @@ namespace EmailBox_Application.Services
                 dateTime = x.DateTime,
                 lastEmailTitle = x.EmailTitle,
                 LastEmailBody = x.LastEmailBody,
-            }).ToList();
+            }).OrderByDescending(x => x.dateTime).ToList();
 
 
             return List;

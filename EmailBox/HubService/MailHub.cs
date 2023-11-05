@@ -51,12 +51,13 @@ namespace EmailBox_Core_Web_App.HubService
         #endregion
 
         #region Email
-        public async Task SendPrivateMail(string currentUserId, string recipientEmail, string Emailmessage,string emailType,string boxid /*,string filePath, string fileType*/)
+        public async Task SendPrivateMail(string currentUserId, string recipientEmail,string Subject, string Emailmessage,string emailType,string boxid /*,string filePath, string fileType*/)
         {
             EmailSendReq obj = new EmailSendReq() {
                 senderId = long.Parse(currentUserId),
-                recipientEmail  = recipientEmail,
+                recipientEmail = recipientEmail,
                 boxId = long.Parse(boxid),
+                emailTitle = Subject,
                 emailBody = Emailmessage,
                 type = emailType,
                 
@@ -65,17 +66,25 @@ namespace EmailBox_Core_Web_App.HubService
             if (_UserServices.IsUserExsit(recipientEmail).Result)
             { 
               var result = _privateEmailServices.AddEmail(obj).Result;
-                var ReceverboxData = _privateEmailServices.inboxDataByID(result.reciverId_UserId).Result;
-                var SenderboxData = _privateEmailServices.SentDataById(result.reciverId_UserId).Result;
+                var ReceverboxData = _privateEmailServices.inboxDataByID(result.reciverId_UserId,result.boxID).Result;
+                var SenderboxData = _privateEmailServices.SentDataById(result.reciverId_UserId, result.boxID).Result;
                 var Recevercons =   _IConService.GetAllConnectionOfThatUserID(result.reciverId_UserId.ToString()).Result;
                 if (Recevercons != null)
                 {
                     foreach(var COn in Recevercons) //reciver
                     {
-                        await Clients.Client(COn).SendAsync("ReceivePrivateMessage", ReceverboxData.boxId, ReceverboxData.SenderId, ReceverboxData.UserName, ReceverboxData.dateTime, ReceverboxData.LastEmailBody, ReceverboxData.photoPath);
-                        await Clients.Client(COn).SendAsync("NotifayMe", "you have New Message :");
+                        await Clients.Client(COn).SendAsync("ReceivePrivateMail", ReceverboxData.boxId, ReceverboxData.SenderId, ReceverboxData.UserName, ReceverboxData.dateTime, ReceverboxData.lastEmailTitle, ReceverboxData.LastEmailBody, ReceverboxData.photoPath);
+                        await Clients.Client(COn).SendAsync("NotifayMe", "you have New Message :","Message Recived");
                     }
                 }
+                // caller message Confirmation
+                await Clients.Caller.SendAsync("MessageSendNotifayMe", "Text Has been Snet","succss");
+                //update sentbox
+                await Clients.Caller.SendAsync("Sentboxupdate", SenderboxData.boxId, SenderboxData.SenderId, SenderboxData.UserName, SenderboxData.dateTime, ReceverboxData.lastEmailTitle, SenderboxData.LastEmailBody, SenderboxData.photoPath);
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("notifayMe", "This Email Not Found..","Error");
             }
 
         }

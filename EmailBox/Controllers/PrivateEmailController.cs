@@ -24,7 +24,7 @@ namespace EmailBox_Core_Web_App.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("SendPrivatEmail")]
-       
+        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles = "Admin,User")]
         public async Task<IActionResult> SendPrivatEmail(EmailSendReq model)
         {
             try
@@ -45,12 +45,15 @@ namespace EmailBox_Core_Web_App.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Inbox/{UserID}")]
-        public async Task<IActionResult> GetInboxListDataByUserID(long UserID)
+        [Route("Inbox")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,User")]
+        public async Task<IActionResult> GetInboxListDataByUserID()
         {
             try
             {
-                var _result =  _privateEmailServices.InboxListDataByUserID(UserID).Result;
+                var userIdentity = User.Identity;
+                var id = userIdentity.Name;
+                var _result =  _privateEmailServices.InboxListDataByUserID(long.Parse(id)).Result;
                 return Ok(new { Status = true, Inbox = _result });
 
             }
@@ -66,12 +69,15 @@ namespace EmailBox_Core_Web_App.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Sentbox/{UserID}")]
-        public async Task<IActionResult> GetSendListDataByUserID(long UserID)
+        [Route("Sentbox")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,User")]
+        public async Task<IActionResult> GetSendListDataByUserID()
         {
             try
             {
-                var _result = _privateEmailServices.SentListDataByUserID(UserID).Result;
+                var userIdentity = User.Identity;
+                var id = userIdentity.Name;
+                var _result = _privateEmailServices.SentListDataByUserID(long.Parse(id)).Result;
                 return Ok(new { Status = true, Inbox = _result });
 
             }

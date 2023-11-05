@@ -13,9 +13,9 @@ namespace EmailBox_Application.Interfaces
         Task<EmailSendResponse> AddEmail(EmailSendReq model);
         Task<EmailSendResponse> GetEmailById(long emialId);
         Task<List<EmailSendResponse>> GetEmailListById(long emialId);
-        Task<BoxMessagesRespose> inboxDataByID(long? UserID);
+        Task<BoxMessagesRespose> inboxDataByID(long? UserID,long?boxid);
         Task<List<BoxMessagesRespose>> InboxListDataByUserID(long CurrentUserId);
-        Task<BoxMessagesRespose> SentDataById(long? UserID);
+        Task<BoxMessagesRespose> SentDataById(long? UserID, long? boxid);
         Task<List<BoxMessagesRespose>> SentListDataByUserID(long CurrentUserId);
     }
 }
