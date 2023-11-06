@@ -96,8 +96,8 @@ namespace EmailBox_Core_Web_App.Controllers
                     var _Result = _ConfirmationCodeServices.GenerateConfirmationCode(model, 6);
                     if (_Result.IsValid)
                     {
-                     // var message =   SendEmail(model, _Result.Status);
-                     return Ok(new { Status = _Result.IsValid, message = /*message*/"Confirmation Code Sent" });
+                     var message =   SendEmail(model, _Result.Status);
+                     return Ok(new { Status = _Result.IsValid, message = message });
 
                     }
                     else
@@ -158,8 +158,8 @@ namespace EmailBox_Core_Web_App.Controllers
             {
 
 
-                string fromMail = "";//Add Email
-                string fromPassword = "";//add password
+                string fromMail = "ddabxuu@gmail.com";//Add Email
+                string fromPassword = "naarmbeuuawtiysy";//add password
                 MailMessage message = new MailMessage();
                 message.From = new MailAddress(fromMail);
                 message.Subject = "Confirmation Code from MailBox";

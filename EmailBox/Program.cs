@@ -78,7 +78,7 @@ builder.Services.AddTransient<IPrivateEmailServices, PrivateEmailServices>();
 builder.Services.AddTransient<IConfirmationCodeServices, ConfirmationCodeServices>();
 
 //db
-builder.Services.AddDbContext<EBContexts>(options => options.UseSqlServer("Server=.; Database=EmailBoxDb; Trusted_Connection=True; MultipleActiveResultSets=True;TrustServerCertificate=True"));
+builder.Services.AddDbContext<EBContexts>(options => options.UseSqlServer("Server=.; Database=EmailBoxDb2; Trusted_Connection=True; MultipleActiveResultSets=True;TrustServerCertificate=True"));
 builder.Services.AddControllers();
 
 // configuring Swagger

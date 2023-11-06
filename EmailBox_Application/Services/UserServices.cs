@@ -62,7 +62,7 @@ namespace EmailBox_Application.Services
 
             if(dbContextEB.Tbl_User.Where(x => x.Email == model.Email && x.Password == model.Password && x.IsActive==true && x.IsDeleted==false).Any())
             {
-              return  await dbContextEB.Tbl_User.Where(x => x.Email == model.Email && x.Password == model.Password).Select(x=>new UserResponse
+                return  await dbContextEB.Tbl_User.Where(x => x.Email == model.Email).Select(x=>new UserResponse
                 {
                     Id = x.Id,
                     UserNamee = x.UserName,
@@ -90,6 +90,7 @@ namespace EmailBox_Application.Services
                 UserName = model.UserNamee,
                 IsActive = model.IsActive,
                 Role = model.Role,
+                IsDeleted = false
             };
              dbContextEB.Add(obj);
             await dbContextEB.SaveChangesAsync();
@@ -108,7 +109,9 @@ namespace EmailBox_Application.Services
                     PhoneNumber = model.PhoneNumber,
                     Location = model.Location,
                     UserName = model.UserNamee,
-                    Role = Role.Admin.ToString(),
+                    Role = Role.User.ToString(),
+                    IsActive = true,
+                    IsDeleted = false,
                 };
                 dbContextEB.Add(obj);
                 await dbContextEB.SaveChangesAsync();
@@ -129,8 +132,9 @@ namespace EmailBox_Application.Services
                     obj.PhoneNumber = model.PhoneNumber;
                     obj.Location = model.Location;
                     obj.UserName = model.UserNamee;
-                    obj.IsActive = model.IsActive;
-                    dbContextEB.Update(obj);
+                    obj.IsActive =model.IsActive;
+                   
+                dbContextEB.Update(obj);
                     dbContextEB.SaveChanges();
                 }
             
